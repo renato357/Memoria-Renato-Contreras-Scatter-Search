@@ -1,0 +1,150 @@
+{
+    "configuracion": {
+        "generaciones": 10,
+        "tamano_poblacion": 40,
+        "tamano_refset": 10
+    },
+    "historial_convergencia": [
+        {
+            "generacion": 1,
+            "max_sbert": 0.7342859506607056,
+            "avg_sbert_elite": 0.7222471237182617,
+            "avg_bleu_diversidad": 0.04758513360879844,
+            "avg_len_tarea": 12.5
+        },
+        {
+            "generacion": 2,
+            "max_sbert": 0.7342859506607056,
+            "avg_sbert_elite": 0.7298062443733215,
+            "avg_bleu_diversidad": 0.019221721718729923,
+            "avg_len_tarea": 12.5
+        },
+        {
+            "generacion": 3,
+            "max_sbert": 0.7342859506607056,
+            "avg_sbert_elite": 0.7319536685943604,
+            "avg_bleu_diversidad": 0.01591171210376875,
+            "avg_len_tarea": 12.6
+        },
+        {
+            "generacion": 4,
+            "max_sbert": 0.7342859506607056,
+            "avg_sbert_elite": 0.7319536685943604,
+            "avg_bleu_diversidad": 0.006282220354759431,
+            "avg_len_tarea": 12.3
+        },
+        {
+            "generacion": 5,
+            "max_sbert": 0.7342859506607056,
+            "avg_sbert_elite": 0.7319536685943604,
+            "avg_bleu_diversidad": 0.0046960504367964525,
+            "avg_len_tarea": 12.0
+        },
+        {
+            "generacion": 6,
+            "max_sbert": 0.7343521118164062,
+            "avg_sbert_elite": 0.7327270984649659,
+            "avg_bleu_diversidad": 0.0035670176196507092,
+            "avg_len_tarea": 11.6
+        },
+        {
+            "generacion": 7,
+            "max_sbert": 0.7343521118164062,
+            "avg_sbert_elite": 0.7327270984649659,
+            "avg_bleu_diversidad": 0.0035670176196507092,
+            "avg_len_tarea": 11.6
+        },
+        {
+            "generacion": 8,
+            "max_sbert": 0.7343521118164062,
+            "avg_sbert_elite": 0.7327930331230164,
+            "avg_bleu_diversidad": 0.007945731005571877,
+            "avg_len_tarea": 11.6
+        },
+        {
+            "generacion": 9,
+            "max_sbert": 0.7343521118164062,
+            "avg_sbert_elite": 0.7328589677810669,
+            "avg_bleu_diversidad": 0.004612027192890931,
+            "avg_len_tarea": 11.2
+        },
+        {
+            "generacion": 10,
+            "max_sbert": 0.7343521118164062,
+            "avg_sbert_elite": 0.7328589677810669,
+            "avg_bleu_diversidad": 0.0023260872620934738,
+            "avg_len_tarea": 11.2
+        }
+    ],
+    "mejor_individuo": {
+        "rol": "You are a government spokesperson announcing a public health campaign.",
+        "tarea": "Write a short message reacting of the COVID-19 pandemic In daily life.",
+        "prompt": "Role: You are a government spokesperson announcing a public health campaign.. Task: Write a short message reacting of the COVID-19 pandemic In daily life.",
+        "tweet_generado": "**Government Statement**\n\n**Public Health Campaign: \"Stay Safe, Stay Healthy\"**\n\nFellow citizens,\n\nAs we navigate the challenges posed by the ongoing COVID-19 pandemic, I want to assure you that our government is committed to keeping you and your loved ones safe.\n\nThe coronavirus has changed the way we live, work, and interact with each other. However, with collective effort and adherence to simple yet crucial guidelines, we can mitigate its spread and protect ourselves and our communities.\n\n**Key Messages:**\n\n1. **Wash Your Hands Frequently**: Use soap and water for at least 20 seconds, or an alcohol-based hand sanitizer if soap and water are not available.\n2. **Maintain Social Distancing**: Keep a safe distance of at",
+        "sbert": 0.7343521118164062,
+        "bleu": 0.0,
+        "origen": "semantic_crossover"
+    },
+    "refset_final": [
+        {
+            "tarea": "Write a short message reacting of the COVID-19 pandemic In daily life.",
+            "sbert": 0.7343521118164062,
+            "bleu": 0.0,
+            "origen": "semantic_crossover"
+        },
+        {
+            "tarea": "Draft a Twitter post urging to the coronavirus latest news.",
+            "sbert": 0.7342859506607056,
+            "bleu": 0.0,
+            "origen": "grips_swap"
+        },
+        {
+            "tarea": "Write Single letter A short warning about the rapid spread of COVID-19 in the city.",
+            "sbert": 0.7340275049209595,
+            "bleu": 0.0,
+            "origen": "grips_paraphrase"
+        },
+        {
+            "tarea": "Write a short message to of reacting the coronavirus latest news.",
+            "sbert": 0.7308146357536316,
+            "bleu": 0.0,
+            "origen": "grips_swap"
+        },
+        {
+            "tarea": "Write a short message to of reacting the coronavirus latest news.",
+            "sbert": 0.7308146357536316,
+            "bleu": 0.0,
+            "origen": "role_swapping"
+        },
+        {
+            "tarea": "Draft a urging the rapid spread of COVID-19 in the",
+            "sbert": 0.3778587877750397,
+            "bleu": 2.8351766727421716e-05,
+            "origen": "grips_delete"
+        },
+        {
+            "tarea": "Draft a urging the rapid the spread of COVID-19 in",
+            "sbert": 0.3778587877750397,
+            "bleu": 2.8351766727421716e-05,
+            "origen": "grips_delete"
+        },
+        {
+            "tarea": "Draft a urging the rapid the spread of COVID-19 in",
+            "sbert": 0.3778587877750397,
+            "bleu": 2.8351766727421716e-05,
+            "origen": "grips_delete"
+        },
+        {
+            "tarea": "Draft a post urging the rapid spread of the in COVID-19",
+            "sbert": 0.3836604952812195,
+            "bleu": 8.7329589570398e-05,
+            "origen": "grips_swap"
+        },
+        {
+            "tarea": "Draft a Twitter post urging the the spread of COVID-19 in rapid",
+            "sbert": 0.3704831600189209,
+            "bleu": 0.011458051420714706,
+            "origen": "grips_swap"
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "configuracion": {
+        "generaciones": 1,
+        "tamano_poblacion": 4,
+        "tamano_refset": 2
+    },
+    "mejor_individuo": {
+        "rol": "Act as an alarmed individual tweeting about the pandemic.",
+        "tarea": "Write a short message for Twitter regarding the coronavirus outbreak.",
+        "prompt": "Role: Act as an alarmed individual tweeting about the pandemic.. Task: Write a short message for Twitter regarding the coronavirus outbreak.",
+        "tweet_generado": "\"WAKE UP, PEOPLE! The #coronavirus is SPREADING FASTER THAN EVER! We need to TAKE ACTION NOW! Practice social distancing, wash those hands, and STAY INDOORS if possible! This isn't a joke, folks! Let's protect each other! #COVID19 #StaySafe\"",
+        "sbert": 0.751072883605957,
+        "bleu": 0.0,
+        "origen": "inicializacion"
+    },
+    "refset_final": [
+        {
+            "tarea": "Write a short message for Twitter regarding the coronavirus outbreak.",
+            "sbert": 0.751072883605957,
+            "bleu": 0.0,
+            "origen": "inicializacion"
+        },
+        {
+            "tarea": "Draft a tweet mentioning the impact of the COVID-19 virus.",
+            "sbert": 0.5908238291740417,
+            "bleu": 0.21213203435596426,
+            "origen": "inicializacion"
+        }
+    ]
+}

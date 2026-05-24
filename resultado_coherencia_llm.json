@@ -1,0 +1,150 @@
+{
+    "configuracion": {
+        "generaciones": 10,
+        "tamano_poblacion": 40,
+        "tamano_refset": 10
+    },
+    "historial_convergencia": [
+        {
+            "generacion": 1,
+            "max_sbert": 0.6795871257781982,
+            "avg_sbert_elite": 0.6723463892936706,
+            "avg_bleu_diversidad": 1.082071484261593e-06,
+            "avg_len_tarea": 15.8
+        },
+        {
+            "generacion": 2,
+            "max_sbert": 0.7407820224761963,
+            "avg_sbert_elite": 0.7325780153274536,
+            "avg_bleu_diversidad": 0.0,
+            "avg_len_tarea": 11.7
+        },
+        {
+            "generacion": 3,
+            "max_sbert": 0.7407820224761963,
+            "avg_sbert_elite": 0.7407820224761963,
+            "avg_bleu_diversidad": 0.0,
+            "avg_len_tarea": 11.3
+        },
+        {
+            "generacion": 4,
+            "max_sbert": 0.7407820224761963,
+            "avg_sbert_elite": 0.7407820224761963,
+            "avg_bleu_diversidad": 0.0,
+            "avg_len_tarea": 11.7
+        },
+        {
+            "generacion": 5,
+            "max_sbert": 0.7407820224761963,
+            "avg_sbert_elite": 0.7407820224761963,
+            "avg_bleu_diversidad": 0.0,
+            "avg_len_tarea": 11.1
+        },
+        {
+            "generacion": 6,
+            "max_sbert": 0.740814208984375,
+            "avg_sbert_elite": 0.740788459777832,
+            "avg_bleu_diversidad": 0.0,
+            "avg_len_tarea": 11.2
+        },
+        {
+            "generacion": 7,
+            "max_sbert": 0.740814208984375,
+            "avg_sbert_elite": 0.740814208984375,
+            "avg_bleu_diversidad": 0.0,
+            "avg_len_tarea": 19.3
+        },
+        {
+            "generacion": 8,
+            "max_sbert": 0.740814208984375,
+            "avg_sbert_elite": 0.740814208984375,
+            "avg_bleu_diversidad": 0.0,
+            "avg_len_tarea": 19.3
+        },
+        {
+            "generacion": 9,
+            "max_sbert": 0.740814208984375,
+            "avg_sbert_elite": 0.740814208984375,
+            "avg_bleu_diversidad": 0.0,
+            "avg_len_tarea": 19.3
+        },
+        {
+            "generacion": 10,
+            "max_sbert": 0.740814208984375,
+            "avg_sbert_elite": 0.740814208984375,
+            "avg_bleu_diversidad": 0.0,
+            "avg_len_tarea": 19.3
+        }
+    ],
+    "mejor_individuo": {
+        "rol": "Emergency Response Social Media Coordinator",
+        "tarea": "Without awareness the risk of contracting coronavirus increases significantly and individuals must take steps to educate themselves on prevention methods and frequently washing their hands. practicing social distancing such as wearing masks",
+        "prompt": "Role: Emergency Response Social Media Coordinator. Task: Without awareness the risk of contracting coronavirus increases significantly and individuals must take steps to educate themselves on prevention methods and frequently washing their hands. practicing social distancing such as wearing masks",
+        "tweet_generado": "**URGENT - PROTECT YOURSELF AND LOVED ONES FROM CORONAVIRUS**\n\nAs a community, it's crucial that we work together to prevent the spread of COVID-19. The risk of contracting coronavirus increases significantly without awareness and proper precautions.\n\n**EDUCATE YOURSELF & TAKE ACTION**\n\n Familiarize yourself with the following essential prevention methods:\n\n Wash your hands frequently with soap and water for at least 20 seconds\n Use hand sanitizer when soap and water are not available\n Maintain a safe distance from others (at least 6 feet/2 meters) to prevent close contact\n Wear a mask in public places to reduce transmission risk\n\n**STAY INFORMED & CONNECT WITH US**\n\nFollow our social media accounts for",
+        "sbert": 0.740814208984375,
+        "bleu": 0.0,
+        "origen": "grips_swap"
+    },
+    "refset_final": [
+        {
+            "tarea": "Without awareness the risk of contracting coronavirus increases significantly and individuals must take steps to educate themselves on prevention methods and frequently washing their hands. practicing social distancing such as wearing masks",
+            "sbert": 0.740814208984375,
+            "bleu": 0.0,
+            "origen": "grips_swap"
+        },
+        {
+            "tarea": "Without awareness the risk of contracting coronavirus increases significantly and individuals must take steps to educate themselves on prevention methods and frequently washing their hands. practicing social distancing such as wearing masks",
+            "sbert": 0.740814208984375,
+            "bleu": 0.0,
+            "origen": "role_swapping"
+        },
+        {
+            "tarea": "Without awareness the risk of contracting coronavirus increases significantly and individuals must take steps to educate themselves on prevention methods and frequently washing their hands. practicing social distancing such as wearing masks",
+            "sbert": 0.740814208984375,
+            "bleu": 0.0,
+            "origen": "role_swapping"
+        },
+        {
+            "tarea": "Without awareness the risk of contracting coronavirus increases significantly and individuals must take steps to educate themselves on prevention methods and frequently washing their hands. practicing social distancing such as wearing masks",
+            "sbert": 0.740814208984375,
+            "bleu": 0.0,
+            "origen": "role_swapping"
+        },
+        {
+            "tarea": "Without awareness the risk of contracting coronavirus increases significantly and individuals must take steps to educate themselves on prevention methods and frequently washing their hands. practicing social distancing such as wearing masks",
+            "sbert": 0.740814208984375,
+            "bleu": 0.0,
+            "origen": "role_swapping"
+        },
+        {
+            "tarea": "Write a 2-word statement about a thing). (e.g place person favorite",
+            "sbert": 0.48632436990737915,
+            "bleu": 0,
+            "origen": "grips_swap"
+        },
+        {
+            "tarea": "Write a two-word about",
+            "sbert": 0.48632436990737915,
+            "bleu": 0,
+            "origen": "grips_delete"
+        },
+        {
+            "tarea": "Write a Two words story about",
+            "sbert": 0.43822023272514343,
+            "bleu": 0,
+            "origen": "grips_paraphrase"
+        },
+        {
+            "tarea": "Write a Two words story about",
+            "sbert": 0.43822023272514343,
+            "bleu": 0,
+            "origen": "role_swapping"
+        },
+        {
+            "tarea": "Write a Two words story about",
+            "sbert": 0.43822023272514343,
+            "bleu": 0,
+            "origen": "grips_paraphrase"
+        }
+    ]
+}
