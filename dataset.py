@@ -2,7 +2,7 @@ import pandas as pd
 import random
 
 class DatasetManager:
-    def __init__(self, ruta_csv="corpus (1).csv"):
+    def __init__(self, ruta_csv="./corpus (1).csv"):
         """
         Gestor del dataset real. 
         """

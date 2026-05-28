@@ -1,71 +1,80 @@
 import json
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
-def promediar_historial(archivos):
-    """Lee una lista de archivos JSON y retorna el promedio de max_sbert por generación"""
+def cargar_historiales(base_name):
+    """Busca y carga todos los JSON (original + 4 clones) de un caso específico."""
     historiales = []
+    sufijos = ["", "_2", "_3", "_4", "_5"]
     
-    for ruta in archivos:
-        try:
-            with open(ruta, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                max_sbert = [x['max_sbert'] for x in data['historial_convergencia']]
-                historiales.append(max_sbert)
-        except Exception as e:
-            print(f"Error cargando {ruta}: {e}")
-            
-    if not historiales:
-        return []
+    for suf in sufijos:
+        # Busca el archivo en la misma carpeta o dentro de "Resultados/"
+        rutas_posibles = [
+            f"{base_name}{suf}.json",
+            os.path.join("Resultados", f"{base_name}{suf}.json")
+        ]
         
-    matriz = np.array(historiales)
-    promedios = np.mean(matriz, axis=0)
-    return promedios.tolist()
+        for ruta in rutas_posibles:
+            if os.path.exists(ruta):
+                try:
+                    with open(ruta, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                        max_sbert = [x['max_sbert'] for x in data['historial_convergencia']]
+                        historiales.append(max_sbert)
+                    break # Si lo encuentra bien, deja de buscar ese sufijo
+                except Exception as e:
+                    print(f"Error al leer {ruta}: {e}")
+                    
+    return historiales
 
-def graficar_convergencia_promediada():
-    archivos_10x10 = [
-        "resultado_init_10x10.json",  
-        "resultado_init_10x10_2.json",
-        "resultado_init_10x10_3.json",
-        "resultado_init_10x10_4.json",
-        "resultado_init_10x10_5.json"
-    ]
-    
-    archivos_llm = [
-        "resultado_init_llm.json",   
-        "resultado_init_llm_2.json", 
-        "resultado_init_llm_3.json",
-        "resultado_init_llm_4.json",
-        "resultado_init_llm_5.json"
-    ]
+def graficar_super_completo():
+    # Definimos los 4 casos que generamos
+    casos = {
+        "Init 10x10": {"base": "resultado_init_10x10", "color": "#d62728", "marker": "^"},     # Rojo
+        "Init LLM": {"base": "resultado_init_llm", "color": "#1f77b4", "marker": "o"},         # Azul
+        "Cruce Puro": {"base": "resultado_coherencia_pura", "color": "#2ca02c", "marker": "s"},# Verde
+        "Cruce LLM": {"base": "resultado_coherencia_llm", "color": "#9467bd", "marker": "D"}   # Morado
+    }
 
-    plt.figure(figsize=(10, 6))
-
-    # Sacamos los promedios
-    promedios_10x10 = promediar_historial(archivos_10x10)
-    promedios_llm = promediar_historial(archivos_llm)
-    
-    # Generaciones del 1 al 10
+    plt.figure(figsize=(13, 7.5))
     generaciones = list(range(1, 11))
-    
-    # Graficamos las líneas promediadas
-    if promedios_10x10:
-        plt.plot(generaciones, promedios_10x10, 'r--^', label="Init 10x10 (Promedio 5 runs)", linewidth=2, markersize=6)
-    if promedios_llm:
-        plt.plot(generaciones, promedios_llm, 'b-o', label="Init LLM + Cruce Puro (Promedio 5 runs)", linewidth=2, markersize=6)
+
+    for nombre, config in casos.items():
+        historiales = cargar_historiales(config["base"])
+        
+        if not historiales:
+            print(f"⚠️ No se encontraron archivos para {nombre}")
+            continue
+
+        # 1. Graficamos las corridas individuales (líneas delgadas y transparentes)
+        for i, hist in enumerate(historiales):
+            # Solo le ponemos etiqueta a la primera línea individual para no reventar la leyenda
+            etiqueta = f"{nombre} (Indiv)" if i == 0 else ""
+            plt.plot(generaciones, hist, color=config["color"], alpha=0.25, linewidth=1.2, label=etiqueta)
+
+        # 2. Calculamos y graficamos el promedio (línea gordita y con marcadores)
+        if len(historiales) > 0:
+            matriz = np.array(historiales)
+            promedios = np.mean(matriz, axis=0)
+            plt.plot(generaciones, promedios, color=config["color"], alpha=1.0, linewidth=3.8, 
+                     marker=config["marker"], markersize=8, label=f"{nombre} (PROMEDIO)")
 
     # Configuración estética
-    plt.title('Convergencia Promedio de SBERT (5 Ejecuciones Independientes)', fontsize=14, fontweight='bold')
-    plt.xlabel('Generación', fontsize=12)
-    plt.ylabel('SBERT Máximo Promedio', fontsize=12)
-    plt.xticks(range(1, 11))
-    plt.legend(loc="lower right", fontsize=10)
-    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.title('Convergencia SBERT: Todas las Variaciones y Promedios', fontsize=16, fontweight='bold')
+    plt.xlabel('Generación', fontsize=13)
+    plt.ylabel('SBERT Máximo', fontsize=13)
+    plt.xticks(generaciones)
     
-    nombre_salida = 'curva_promediada_final.png'
-    plt.savefig(nombre_salida, dpi=300, bbox_inches='tight')
-    print(f"\n¡Éxito! Gráfico promediado guardado como: {nombre_salida}")
+    # Ajustamos la leyenda para que se vea ordenada y fuera del gráfico
+    plt.legend(bbox_to_anchor=(1.02, 1), loc='upper left', fontsize=10)
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.tight_layout()
+    
+    nombre_salida = 'curva_super_completa.png'
+    plt.savefig(nombre_salida, dpi=300)
+    print(f"\n¡Éxito! Gráfico guardado como: {nombre_salida}")
     plt.show()
 
 if __name__ == "__main__":
-    graficar_convergencia_promediada()
+    graficar_super_completo()

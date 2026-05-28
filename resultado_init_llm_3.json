@@ -1,0 +1,150 @@
+{
+    "configuracion": {
+        "generaciones": 10,
+        "tamano_poblacion": 40,
+        "tamano_refset": 10
+    },
+    "historial_convergencia": [
+        {
+            "generacion": 1,
+            "max_sbert": 0.6823133408429791,
+            "avg_sbert_elite": 0.6712464866822097,
+            "avg_bleu_diversidad": 1.6792057175220578e-06,
+            "avg_len_tarea": 17.3
+        },
+        {
+            "generacion": 2,
+            "max_sbert": 0.6823133408429791,
+            "avg_sbert_elite": 0.6571093109295059,
+            "avg_bleu_diversidad": 3.739560558132118e-06,
+            "avg_len_tarea": 16.6
+        },
+        {
+            "generacion": 3,
+            "max_sbert": 0.7399280833103288,
+            "avg_sbert_elite": 0.714553567940383,
+            "avg_bleu_diversidad": 9.913285355686175e-07,
+            "avg_len_tarea": 16.7
+        },
+        {
+            "generacion": 4,
+            "max_sbert": 0.7399280833103288,
+            "avg_sbert_elite": 0.7204797512304467,
+            "avg_bleu_diversidad": 1.382613423053464e-06,
+            "avg_len_tarea": 15.6
+        },
+        {
+            "generacion": 5,
+            "max_sbert": 0.7399280833103288,
+            "avg_sbert_elite": 0.7297943846313957,
+            "avg_bleu_diversidad": 1.981149525371287e-06,
+            "avg_len_tarea": 13.6
+        },
+        {
+            "generacion": 6,
+            "max_sbert": 0.7399280833103288,
+            "avg_sbert_elite": 0.7303279277753906,
+            "avg_bleu_diversidad": 1.2570941013235216e-06,
+            "avg_len_tarea": 13.3
+        },
+        {
+            "generacion": 7,
+            "max_sbert": 0.7399280833103288,
+            "avg_sbert_elite": 0.7314266199562925,
+            "avg_bleu_diversidad": 1.3070432824141735e-06,
+            "avg_len_tarea": 13.2
+        },
+        {
+            "generacion": 8,
+            "max_sbert": 0.7399280833103288,
+            "avg_sbert_elite": 0.7344244403333205,
+            "avg_bleu_diversidad": 1.561291586711273e-06,
+            "avg_len_tarea": 13.2
+        },
+        {
+            "generacion": 9,
+            "max_sbert": 0.7669521722427172,
+            "avg_sbert_elite": 0.7634271927045323,
+            "avg_bleu_diversidad": 1.4820180901362579e-06,
+            "avg_len_tarea": 13.2
+        },
+        {
+            "generacion": 10,
+            "max_sbert": 0.7669521722427172,
+            "avg_sbert_elite": 0.7669521722427172,
+            "avg_bleu_diversidad": 4.633038312443373e-07,
+            "avg_len_tarea": 13.2
+        }
+    ],
+    "mejor_individuo": {
+        "rol": "Emergency Response Social Media Coordinator",
+        "tarea": "Write a tweet alert risk potential the risk of transmission due global crisis outbreak",
+        "prompt": "Role: Emergency Response Social Media Coordinator. Task: Write a tweet alert risk potential the risk of transmission due global crisis outbreak",
+        "tweet_generado": "\"URGENT PUBLIC HEALTH ALERT: With the ongoing #COVID19 pandemic, we urge everyone to take extra precautions to avoid spreading the virus. Practice social distancing, wear a mask in public spaces, and wash your hands frequently. Protect yourself & others. Stay safe! #CoronavirusPrevention\"",
+        "sbert": 0.7669521722427172,
+        "bleu": 0.0,
+        "origen": "grips_swap"
+    },
+    "refset_final": [
+        {
+            "tarea": "a tweet warning risk the risk of the virus transmission due global crisis outbreak",
+            "sbert": 0.7669521722427172,
+            "bleu": 0.0,
+            "origen": "grips_swap"
+        },
+        {
+            "tarea": "Write a tweet warning risk potential the risk of SARS-CoV-2 expansion due outbreak outbreak",
+            "sbert": 0.7652385850727095,
+            "bleu": 0.0,
+            "origen": "grips_swap"
+        },
+        {
+            "tarea": "Write a tweet alert risk potential the risk of coronavirus spread due global crisis outbreak",
+            "sbert": 0.7634618885500769,
+            "bleu": 0.0,
+            "origen": "role_swapping"
+        },
+        {
+            "tarea": "Write a tweet warning risk potential the risk of coronavirus spread due pandemic outbreak",
+            "sbert": 0.7638979360420705,
+            "bleu": 0.0,
+            "origen": "role_swapping"
+        },
+        {
+            "tarea": "Write a tweet warning risk potential the risk of COVID-19 spread due pandemic outbreak",
+            "sbert": 0.7615251871570167,
+            "bleu": 0.0,
+            "origen": "role_swapping"
+        },
+        {
+            "tarea": "Write a 2-word about statement positive risk of outbreak circulation due pandemic coronavirus",
+            "sbert": 0.5205454230308533,
+            "bleu": 4.811088557517246e-07,
+            "origen": "grips_swap"
+        },
+        {
+            "tarea": "a 2-word statement positive risk of pandemic transmission due coronavirus outbreak",
+            "sbert": 0.5205454230308533,
+            "bleu": 4.811088557517246e-07,
+            "origen": "grips_swap"
+        },
+        {
+            "tarea": "Write a 2-word about statement positive risk of expansion due pandemic coronavirus",
+            "sbert": 0.5205454230308533,
+            "bleu": 4.811088557517246e-07,
+            "origen": "grips_delete"
+        },
+        {
+            "tarea": "a 2-word about statement positive risk risk of transmission outbreak",
+            "sbert": 0.5205454230308533,
+            "bleu": 4.811088557517246e-07,
+            "origen": "grips_delete"
+        },
+        {
+            "tarea": "a 2-word about statement positive risk risk of expansion due pandemic outbreak",
+            "sbert": 0.5205454230308533,
+            "bleu": 4.811088557517246e-07,
+            "origen": "grips_delete"
+        }
+    ]
+}
