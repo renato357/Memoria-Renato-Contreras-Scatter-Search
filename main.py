@@ -59,7 +59,7 @@ def ejecutar_experimento(generaciones=3, tamano_poblacion=10, tamano_refset=4, a
         nuevo_elite = pool_total[:ss.b_elite]
         restantes = pool_total[ss.b_elite:]
         
-        # --- CAMBIO CLAVE: BLEU SOBRE LA DATA GENERADA (TWEETS) ---
+        # BLEU SOBRE LA DATA GENERADA (TWEETS)
         textos_tweets_elite = [sol.dato_generado for sol in nuevo_elite]
         for sol in restantes:
             sol.score_bleu = ss.evaluador.calcular_diversidad_bleu(sol.dato_generado, textos_tweets_elite)
