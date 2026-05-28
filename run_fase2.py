@@ -4,7 +4,7 @@ from scatter_search import ScatterSearch
 
 def ejecutar_bateria_fase2():
     print("==================================================")
-    print(" INICIANDO TEST A/B: COHERENCIA DE OPERADORES")
+    print(" INICIANDO TEST A/B: COHERENCIA DE OPERADORES (3 EJECUCIONES)")
     print("==================================================\n")
     
     tiempo_global_inicio = time.time()
@@ -19,12 +19,17 @@ def ejecutar_bateria_fase2():
     
     # --- PRUEBA A: CRUCE PURO (Sin LLM Corrector) ---
     print(">>> LANZANDO PRUEBA A: CRUCE PURO (Rápido, pero gramática rota)")
-    ejecutar_experimento(
-        generaciones=10, 
-        tamano_poblacion=40, 
-        tamano_refset=10, 
-        archivo_salida="resultado_coherencia_pura.json"
-    )
+    for i in range(1, 4):
+        sufijo = "" if i == 1 else f"_{i}"
+        archivo_salida = f"resultado_coherencia_pura{sufijo}.json"
+        
+        print(f" -> Ejecutando corrida {i}/3: {archivo_salida}...")
+        ejecutar_experimento(
+            generaciones=10, 
+            tamano_poblacion=40, 
+            tamano_refset=10, 
+            archivo_salida=archivo_salida
+        )
     
     print("\n[PAUSA TÉCNICA] Dejando enfriar el equipo por 30 segundos...\n")
     time.sleep(30)
@@ -32,23 +37,23 @@ def ejecutar_bateria_fase2():
     # --- PRUEBA B: CRUCE COHERENTE (Con LLM Corrector) ---
     print(">>> LANZANDO PRUEBA B: CRUCE COHERENTE (Llama 3 arregla la gramática)")
     
-    # Hackeamos la clase ScatterSearch para que use el cruce coherente de tu profe
+    # Hackeamos la clase ScatterSearch para que use el cruce coherente
     ScatterSearch.combinar_soluciones = ScatterSearch.combinar_soluciones_coherente
     
-    ejecutar_experimento(
-        generaciones=10, 
-        tamano_poblacion=40, 
-        tamano_refset=10, 
-        archivo_salida="resultado_coherencia_llm.json"
-    )
-    
-    # Restauramos el método original al terminar
-    ScatterSearch.combinar_soluciones = metodo_cruce_puro
-    
-    tiempo_global_fin = (time.time() - tiempo_global_inicio) / 3600
-    print("\n==================================================")
-    print(f" BATERÍA FASE 2 COMPLETADA EN {tiempo_global_fin:.2f} HORAS.")
-    print("==================================================")
+    for i in range(1, 4):
+        sufijo = "" if i == 1 else f"_{i}"
+        archivo_salida = f"resultado_coherencia_llm{sufijo}.json"
+        
+        print(f" -> Ejecutando corrida {i}/3: {archivo_salida}...")
+        ejecutar_experimento(
+            generaciones=10, 
+            tamano_poblacion=40, 
+            tamano_refset=10, 
+            archivo_salida=archivo_salida
+        )
+        
+    tiempo_total = time.time() - tiempo_global_inicio
+    print(f"\nBatería Fase 2 completada en {tiempo_total/60:.2f} minutos.")
 
 if __name__ == "__main__":
     ejecutar_bateria_fase2()
