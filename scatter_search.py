@@ -6,24 +6,39 @@ from llm import MotorLLM
 from dataset import DatasetManager
 
 class ScatterSearch:
-    def __init__(self, tamano_poblacion=20, tamano_refset=10):
+    def __init__(self, tamano_poblacion=40, tamano_refset=10, validacion_cruzada=True):
         self.P_size = tamano_poblacion
         self.b = tamano_refset
         self.b_elite = self.b // 2
         self.b_div = self.b - self.b_elite
+        self.validacion_cruzada = validacion_cruzada
         
         print("--- INICIALIZANDO SS-GrIPS ---")
         self.evaluador = EvaluadorMetricas()
         self.llm = MotorLLM()
         self.dataset = DatasetManager()
         
-        # Cargamos una muestra de referencia (50 tweets reales para evaluar SBERT)
-        self.textos_referencia = self.dataset.obtener_muestra_referencia(n=50, semilla=42)
+        # 1. Obtenemos primero los textos que usará Llama 3 para inspirarse (Fase 1)
+        self.textos_contexto_llm = self.dataset.obtener_muestra_referencia(n=self.P_size, semilla=None)
+        
+        # 2. Obtenemos el "Gold Standard" de evaluación (SBERT) según la estrategia elegida
+        if self.validacion_cruzada:
+            print("[Estrategia] Validación Cruzada: El Gold Standard será 100% excluyente a los ejemplos del LLM.")
+            self.textos_referencia = self.dataset.obtener_muestra_referencia(
+                n=50, 
+                semilla=None, 
+                excluir_textos=self.textos_contexto_llm
+            )
+        else:
+            print("[Estrategia] Validación Estándar: El Gold Standard se extrae de forma independiente.")
+            self.textos_referencia = self.dataset.obtener_muestra_referencia(
+                n=50, 
+                semilla=None
+            )
 
     def generar_poblacion_inicial(self) -> list:
         """
-        Genera P soluciones iniciales combinando 10 Roles y 10 Tareas (100 combinaciones).
-        Mantenido por compatibilidad de la clase base.
+        Genera P soluciones iniciales de forma determinista (Baseline 10x10).
         """
         roles = [
             "You are a public health official issuing a formal statement.",
@@ -56,20 +71,17 @@ class ScatterSearch:
             for t in tareas:
                 poblacion.append(PromptSolution(rol=r, tarea=t, origen="inicializacion"))
                 
-        random.seed(42)
         random.shuffle(poblacion)
         return poblacion[:self.P_size]
 
     def generar_poblacion_inicial_llm(self) -> list:
         """
-        [GANADOR FASE 1] Genera P soluciones iniciales usando a Llama 3 para aplicar 
-        Ingeniería de Prompts Inversa basándose en ejemplos reales del dataset.
+        [LLM Init] Genera P soluciones iniciales basándose en el contexto extraído.
         """
-        print(f"\n[Fase 1 - Configuración LLM] Generando población inicial de {self.P_size} individuos con Llama 3...")
-        textos_ejemplo = self.dataset.obtener_muestra_referencia(n=self.P_size, semilla=99)
+        print(f"\n[Fase 1] Generando población inicial de {self.P_size} individuos con Llama 3...")
         poblacion = []
         
-        for i, texto in enumerate(textos_ejemplo):
+        for i, texto in enumerate(self.textos_contexto_llm):
             print(f"  -> Generando prompt {i+1}/{self.P_size} basado en data real...", end="", flush=True)
             prompt_meta = (
                 f"Read this real tweet: '{texto}'. "
@@ -138,9 +150,6 @@ class ScatterSearch:
         return list(itertools.combinations(refset, 2))
 
     def combinar_soluciones(self, p1: PromptSolution, p2: PromptSolution) -> list:
-        """
-        [VERSIÓN PURA] Aplica los operadores de cruce estructurados de forma mecánica.
-        """
         hijos = []
         hijo1 = PromptSolution(rol=p1.rol, tarea=p2.tarea, origen="role_swapping")
         hijo2 = PromptSolution(rol=p2.rol, tarea=p1.tarea, origen="role_swapping")
@@ -163,18 +172,12 @@ class ScatterSearch:
         return hijos
 
     def combinar_soluciones_coherente(self, p1: PromptSolution, p2: PromptSolution) -> list:
-        """
-        [VARIANTE COHERENCIA] Cruza las soluciones, pero llama a Llama 3 para reparar 
-        la gramática y sintaxis de los hijos del Crossover Semántico antes de evaluarlos.
-        """
         hijos = []
         
-        # 1. Role Swapping (Intercambio de roles - Estructuralmente ya es coherente)
         hijo1 = PromptSolution(rol=p1.rol, tarea=p2.tarea, origen="role_swapping")
         hijo2 = PromptSolution(rol=p2.rol, tarea=p1.tarea, origen="role_swapping")
         hijos.extend([hijo1, hijo2])
         
-        # 2. Semantic Task Crossover (Cruce a nivel de token)
         t1_tokens = p1.tarea.split()
         t2_tokens = p2.tarea.split()
         
@@ -185,7 +188,6 @@ class ScatterSearch:
             tarea_mixta_1 = " ".join(t1_tokens[:mid1] + t2_tokens[mid2:])
             tarea_mixta_2 = " ".join(t2_tokens[:mid2] + t1_tokens[mid1:])
             
-            # Corrección Gramatical con LLM para el Hijo 3
             prompt_corr1 = (
                 f"Fix the grammar and punctuation of this prompt task so it reads naturally, "
                 f"without changing its core objective or constraints: '{tarea_mixta_1}'. "
@@ -199,7 +201,6 @@ class ScatterSearch:
             except Exception:
                 pass
 
-            # Corrección Gramatical con LLM para el Hijo 4
             prompt_corr2 = (
                 f"Fix the grammar and punctuation of this prompt task so it reads naturally, "
                 f"without changing its core objective or constraints: '{tarea_mixta_2}'. "
