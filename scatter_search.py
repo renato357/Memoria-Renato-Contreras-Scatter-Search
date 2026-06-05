@@ -6,34 +6,60 @@ from llm import MotorLLM
 from dataset import DatasetManager
 
 class ScatterSearch:
-    def __init__(self, tamano_poblacion=40, tamano_refset=10, validacion_cruzada=True):
+    def __init__(self, 
+                 tamano_poblacion=40, 
+                 tamano_refset=10, 
+                 validacion_cruzada=True,
+                 llm_model_name="llama3.1:8b",
+                 sbert_model_name="all-MiniLM-L6-v2",
+                 max_tokens_salida=150,
+                 semilla_global=None):
+        """
+        Inicializa el algoritmo recibiendo todos los hiperparámetros desde la función principal.
+        """
         self.P_size = tamano_poblacion
         self.b = tamano_refset
         self.b_elite = self.b // 2
         self.b_div = self.b - self.b_elite
         self.validacion_cruzada = validacion_cruzada
+        self.semilla_global = semilla_global
         
+        # Anclar la aleatoriedad interna (cruces, shuffle) si hay una semilla
+        if self.semilla_global is not None:
+            random.seed(self.semilla_global)
+        else:
+            random.seed()
+            
         print("--- INICIALIZANDO SS-GrIPS ---")
-        self.evaluador = EvaluadorMetricas()
-        self.llm = MotorLLM()
+        
+        # Inyectamos los parámetros controlados a los módulos secundarios
+        self.evaluador = EvaluadorMetricas(sbert_model_name=sbert_model_name)
+        self.llm = MotorLLM(
+            model_name=llm_model_name, 
+            semilla=self.semilla_global, 
+            max_tokens_salida=max_tokens_salida
+        )
         self.dataset = DatasetManager()
         
-        # 1. Obtenemos primero los textos que usará Llama 3 para inspirarse (Fase 1)
-        self.textos_contexto_llm = self.dataset.obtener_muestra_referencia(n=self.P_size, semilla=None)
+        # 1. Obtenemos los textos que usará Llama 3 para inspirarse (Fase 1)
+        self.textos_contexto_llm = self.dataset.obtener_muestra_referencia(
+            n=self.P_size, 
+            semilla=self.semilla_global
+        )
         
-        # 2. Obtenemos el "Gold Standard" de evaluación (SBERT) según la estrategia elegida
+        # 2. Obtenemos el "Gold Standard" de evaluación (SBERT)
         if self.validacion_cruzada:
-            print("[Estrategia] Validación Cruzada: El Gold Standard será 100% excluyente a los ejemplos del LLM.")
+            print("[Estrategia] Validación Cruzada: El Gold Standard será excluyente.")
             self.textos_referencia = self.dataset.obtener_muestra_referencia(
                 n=50, 
-                semilla=None, 
+                semilla=self.semilla_global, 
                 excluir_textos=self.textos_contexto_llm
             )
         else:
             print("[Estrategia] Validación Estándar: El Gold Standard se extrae de forma independiente.")
             self.textos_referencia = self.dataset.obtener_muestra_referencia(
                 n=50, 
-                semilla=None
+                semilla=self.semilla_global
             )
 
     def generar_poblacion_inicial(self) -> list:
@@ -78,7 +104,7 @@ class ScatterSearch:
         """
         [LLM Init] Genera P soluciones iniciales basándose en el contexto extraído.
         """
-        print(f"\n[Fase 1] Generando población inicial de {self.P_size} individuos con Llama 3...")
+        print(f"\n[Fase 1] Generando población inicial de {self.P_size} individuos con LLM...")
         poblacion = []
         
         for i, texto in enumerate(self.textos_contexto_llm):
@@ -90,6 +116,7 @@ class ScatterSearch:
             )
             
             try:
+                # Temperatura de 0.9 para fomentar la creatividad inicial
                 respuesta = self.llm.invocar(prompt_meta, system_prompt="You are an expert prompt engineer.", temp=0.9)
                 if "Role:" in respuesta and "Task:" in respuesta:
                     partes = respuesta.split("Task:")
@@ -121,29 +148,23 @@ class ScatterSearch:
 
     def construir_refset(self, poblacion: list) -> list:
         """
-        Divide la población evaluada en b_elite (por SBERT) y b_div (por BLEU).
+        Mantiene un conjunto de referencia (RefSet) puramente elitista
+        basado estrictamente en la métrica de calidad semántica (SBERT).
         """
         print(f"\n[Fase 2] Evaluando Calidad (SBERT) para {len(poblacion)} prompts...")
         for i, sol in enumerate(poblacion):
-            print(f"  Evaluando prompt {i+1}/{len(poblacion)}...")
-            self.evaluar_solucion(sol)
+            # Optimización: Solo invoca al LLM y calcula SBERT si es un individuo nuevo
+            if sol.score_sbert == 0.0:
+                print(f"  Evaluando prompt {i+1}/{len(poblacion)}...")
+                self.evaluar_solucion(sol)
             
+        # Ordenamos la población entera de mayor a menor calidad (SBERT)
         poblacion.sort(key=lambda x: x.score_sbert, reverse=True)
         
-        refset_elite = poblacion[:self.b_elite]
-        restantes = poblacion[self.b_elite:]
+        # Selección puramente elitista: tomamos los 'b' mejores absolutos
+        refset_final = poblacion[:self.b]
         
-        print(f"\n[Fase 2] Evaluando Diversidad Léxica (BLEU) para los {len(restantes)} restantes...")
-        textos_tweets_elite = [sol.dato_generado for sol in refset_elite]
-        
-        for sol in restantes:
-            sol.score_bleu = self.evaluador.calcular_diversidad_bleu(sol.dato_generado, textos_tweets_elite)
-            
-        restantes.sort(key=lambda x: x.score_bleu)
-        refset_div = restantes[:self.b_div]
-        
-        refset_final = refset_elite + refset_div
-        print("\n--- CONSTRUCCIÓN DEL REFSET COMPLETADA ---")
+        print("\n--- CONSTRUCCIÓN DEL REFSET (ELITISTA) COMPLETADA ---")
         return refset_final
 
     def generar_pares(self, refset: list) -> list:
@@ -194,6 +215,7 @@ class ScatterSearch:
                 f"Reply ONLY with the corrected sentence, no quotes or notes."
             )
             try:
+                # Temperatura de 0.2 para corregir gramática sin alucinar contenido extra
                 tarea_corr1 = self.llm.invocar(prompt_corr1, system_prompt="You are a strict text editor.", temp=0.2)
                 tarea_corr1 = tarea_corr1.replace('"', '').replace("'", "").strip()
                 if tarea_corr1:

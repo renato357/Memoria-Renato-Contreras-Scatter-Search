@@ -4,35 +4,51 @@ import copy
 from scatter_search import ScatterSearch
 from grips import ModuloGrIPS
 
-def ejecutar_experimento(generaciones=10, tamano_poblacion=40, tamano_refset=10, archivo_salida="resultado.json", validacion_cruzada=True):
+def ejecutar_experimento(
+    generaciones=10, 
+    tamano_poblacion=40, 
+    tamano_refset=10, 
+    archivo_salida="resultado.json", 
+    validacion_cruzada=True,
+    llm_model_name="llama3.1:8b",
+    sbert_model_name="all-MiniLM-L6-v2",
+    max_tokens_salida=150,
+    semilla_global=None
+):
     print(f"==================================================")
     print(f" INICIANDO EXPERIMENTO SCATTER SEARCH (GrIPS) ")
-    print(f" Config: {generaciones} Gen | Pob: {tamano_poblacion} | RefSet: {tamano_refset} | Val Cruzada: {validacion_cruzada}")
+    print(f" Config: {generaciones} Gen | Pob: {tamano_poblacion} | RefSet: {tamano_refset}")
+    print(f" Val Cruzada: {validacion_cruzada} | Semilla: {semilla_global}")
+    print(f" Modelos: LLM={llm_model_name}, SBERT={sbert_model_name}")
     print(f"==================================================\n")
 
     tiempo_inicio = time.time()
 
-    # 1. Inicializar Scatter Search (ahora recibe la orden de validación)
+    # 1. Inicializar Scatter Search con todos los parámetros controlados
     ss = ScatterSearch(
         tamano_poblacion=tamano_poblacion, 
         tamano_refset=tamano_refset,
-        validacion_cruzada=validacion_cruzada
+        validacion_cruzada=validacion_cruzada,
+        llm_model_name=llm_model_name,
+        sbert_model_name=sbert_model_name,
+        max_tokens_salida=max_tokens_salida,
+        semilla_global=semilla_global
     )
-    grips = ModuloGrIPS()
+    
+    # Pasamos los motores ya instanciados a GrIPS para evitar errores
+    grips = ModuloGrIPS(ss.llm, ss.evaluador)
 
     # 2. Inicialización
-    # (Ojo: run_fase1.py sobreescribe esta función en tiempo de ejecución si se usa Llama 3)
+    # (El run_comparativa.py puede sobreescribir ss.generar_poblacion_inicial)
     poblacion_inicial = ss.generar_poblacion_inicial()
     
-    # Evaluamos y construimos el RefSet inicial. 
-    # Al pasar por aquí, a los 40 individuos se les calcula el SBERT.
+    # Evaluamos y construimos el RefSet inicial.
     refset = ss.construir_refset(poblacion_inicial)
     
-    # [NUEVO] Guardamos la foto completa de los 40 individuos iniciales (ya evaluados).
-    # Usamos deepcopy porque los objetos mutarán y se cruzarán en las siguientes generaciones.
+    # Guardamos la foto completa de los individuos iniciales evaluados
     poblacion_inicial_foto = copy.deepcopy(poblacion_inicial)
     
-    mejor_global = refset[0] # El top 1 actual
+    mejor_global = refset[0]
     
     historial_convergencia = []
     historial_convergencia.append({
@@ -51,13 +67,11 @@ def ejecutar_experimento(generaciones=10, tamano_poblacion=40, tamano_refset=10,
         for p1, p2 in pares:
             hijos = ss.combinar_soluciones(p1, p2)
             for h in hijos:
-                # Mutación GrIPS con probabilidad interna
-                if grips.aplicar_mutacion():
-                    h.tarea = grips.mutar(h.tarea)
-                    h.origen += "_mutated"
-            nuevos_hijos.extend(hijos)
+                # Mutación GrIPS real: toma el hijo, evalúa su base y aplica operadores buscando subir el SBERT
+                h_mejorado = grips.ejecutar_greedy(h, ss.textos_referencia)
+                nuevos_hijos.append(h_mejorado)
             
-        print(f"  Se generaron {len(nuevos_hijos)} hijos nuevos.")
+        print(f"  Se generaron y procesaron por GrIPS {len(nuevos_hijos)} hijos nuevos.")
         
         # Unimos RefSet actual con los nuevos hijos y reconstruimos la élite
         poblacion_combinada = refset + nuevos_hijos
@@ -82,7 +96,7 @@ def ejecutar_experimento(generaciones=10, tamano_poblacion=40, tamano_refset=10,
     print(f"Tiempo total: {tiempo_total_minutos} minutos.")
     print(f"Mejor SBERT Global: {mejor_global.score_sbert:.4f}")
     
-    # 5. Función auxiliar para convertir las listas de objetos en diccionarios para el JSON
+    # 5. Función auxiliar para serializar
     def serializar_poblacion(poblacion_lista):
         return [{
             "rol": sol.rol,
@@ -100,12 +114,15 @@ def ejecutar_experimento(generaciones=10, tamano_poblacion=40, tamano_refset=10,
             "generaciones": generaciones,
             "tamano_poblacion": tamano_poblacion,
             "tamano_refset": tamano_refset,
-            "validacion_cruzada": validacion_cruzada, # Registramos qué método se usó
+            "validacion_cruzada": validacion_cruzada,
+            "llm_model": llm_model_name,
+            "sbert_model": sbert_model_name,
+            "semilla_global": semilla_global,
             "tiempo_ejecucion_minutos": tiempo_total_minutos
         },
         "historial_convergencia": historial_convergencia,
-        "poblacion_inicial": serializar_poblacion(poblacion_inicial_foto), # Los 40 iniciales
-        "mejor_individuo": { # Mantenido por compatibilidad con graficador
+        "poblacion_inicial": serializar_poblacion(poblacion_inicial_foto),
+        "mejor_individuo": { 
             "rol": mejor_global.rol,
             "tarea": mejor_global.tarea,
             "prompt": mejor_global.prompt_completo,
@@ -114,7 +131,7 @@ def ejecutar_experimento(generaciones=10, tamano_poblacion=40, tamano_refset=10,
             "bleu": getattr(mejor_global, 'score_bleu', 0.0),
             "origen": mejor_global.origen
         },
-        "refset_final": serializar_poblacion(refset) # Los 10 finales
+        "refset_final": serializar_poblacion(refset)
     }
     
     with open(archivo_salida, 'w', encoding='utf-8') as f:
@@ -123,5 +140,5 @@ def ejecutar_experimento(generaciones=10, tamano_poblacion=40, tamano_refset=10,
     print(f"Resultados guardados en {archivo_salida}")
 
 if __name__ == "__main__":
-    # Corrida de prueba rápida por si ejecutas main.py directo
-    ejecutar_experimento(generaciones=3, tamano_poblacion=10, tamano_refset=4, archivo_salida="test_run.json", validacion_cruzada=True)
+    # Corrida de prueba rápida local
+    ejecutar_experimento(generaciones=1, tamano_poblacion=4, tamano_refset=2, archivo_salida="test_run.json", semilla_global=42)
