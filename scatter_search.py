@@ -23,13 +23,7 @@ class ScatterSearch:
         self.b_div = self.b - self.b_elite
         self.validacion_cruzada = validacion_cruzada
         self.semilla_global = semilla_global
-        
-        # Anclar la aleatoriedad interna (cruces, shuffle) si hay una semilla
-        if self.semilla_global is not None:
-            random.seed(self.semilla_global)
-        else:
-            random.seed()
-            
+                    
         print("--- INICIALIZANDO SS-GrIPS ---")
         
         # Inyectamos los parámetros controlados a los módulos secundarios
@@ -42,24 +36,22 @@ class ScatterSearch:
         self.dataset = DatasetManager()
         
         # 1. Obtenemos los textos que usará Llama 3 para inspirarse (Fase 1)
+        # Ya NO pasamos la semilla. Usará la secuencia global establecida en main.py
         self.textos_contexto_llm = self.dataset.obtener_muestra_referencia(
-            n=self.P_size, 
-            semilla=self.semilla_global
+            n=self.P_size
         )
         
-        # 2. Obtenemos el "Gold Standard" de evaluación (SBERT)
+        # 2. Obtenemos el "Gold Standard" de evaluación (SBERT) congelado para todo el ciclo
         if self.validacion_cruzada:
             print("[Estrategia] Validación Cruzada: El Gold Standard será excluyente.")
             self.textos_referencia = self.dataset.obtener_muestra_referencia(
                 n=50, 
-                semilla=self.semilla_global, 
                 excluir_textos=self.textos_contexto_llm
             )
         else:
-            print("[Estrategia] Validación Estándar: El Gold Standard se extrae de forma independiente.")
+            print("[Estrategia] Validación Estándar: El Gold Standard permite solapamiento.")
             self.textos_referencia = self.dataset.obtener_muestra_referencia(
-                n=50, 
-                semilla=self.semilla_global
+                n=50
             )
 
     def generar_poblacion_inicial(self) -> list:

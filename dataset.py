@@ -10,16 +10,14 @@ class DatasetManager:
         """
         self.ruta_csv = ruta_csv
 
-    def obtener_muestra_referencia(self, n=50, semilla=None, excluir_textos=None) -> list:
+    def obtener_muestra_referencia(self, n=50, excluir_textos=None) -> list:
         """
         Carga una muestra aleatoria de 'n' textos desde el archivo CSV.
         
         Parámetros:
         - n: Cantidad de textos a extraer.
-        - semilla: Valor numérico para fijar la aleatoriedad desde la función principal.
-                   Si es None, la extracción será completamente dinámica y variable.
-        - excluir_textos: Lista de strings que NO deben seleccionarse (evita Data Leakage 
-                          en validación cruzada).
+        - excluir_textos: Lista de strings que NO deben seleccionarse (evita solapamiento 
+                          en validación cruzada excluyente).
         """
         print(f"Cargando muestra de {n} textos de referencia desde el dataset...")
         try:
@@ -30,12 +28,8 @@ class DatasetManager:
             if excluir_textos is not None:
                 textos_reales = [t for t in textos_reales if t not in excluir_textos]
             
-            # Control dinámico de reproducibilidad
-            if semilla is not None:
-                random.seed(semilla)
-            else:
-                random.seed() # Libera el generador usando el reloj del sistema
-            
+            # Como la semilla global ya se fijó en main.py, esto avanzará la secuencia
+            # sin repetir los mismos textos de la extracción anterior.
             muestra = random.sample(textos_reales, min(n, len(textos_reales)))
             muestra = [texto.strip() for texto in muestra if texto.strip()]
             
@@ -51,5 +45,5 @@ class DatasetManager:
 if __name__ == "__main__":
     # Prueba local de sanidad y funcionamiento aislado
     dm = DatasetManager()
-    test_1 = dm.obtener_muestra_referencia(n=3, semilla=42)
-    print("Muestra fija (Semilla 42):", test_1)
+    test_1 = dm.obtener_muestra_referencia(n=3)
+    print("Muestra extraída:", test_1)

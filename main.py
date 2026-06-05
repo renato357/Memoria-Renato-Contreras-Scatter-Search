@@ -1,6 +1,7 @@
 import json
 import time
 import copy
+import random
 from scatter_search import ScatterSearch
 from grips import ModuloGrIPS
 
@@ -15,6 +16,14 @@ def ejecutar_experimento(
     max_tokens_salida=150,
     semilla_global=None
 ):
+    # ==========================================
+    # ANCLAJE DE ALEATORIEDAD MAESTRA
+    # ==========================================
+    if semilla_global is not None:
+        random.seed(semilla_global)
+    else:
+        random.seed()
+
     print(f"==================================================")
     print(f" INICIANDO EXPERIMENTO SCATTER SEARCH (GrIPS) ")
     print(f" Config: {generaciones} Gen | Pob: {tamano_poblacion} | RefSet: {tamano_refset}")
