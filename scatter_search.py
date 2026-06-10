@@ -130,10 +130,16 @@ class ScatterSearch:
         solucion.dato_generado = texto_generado
         
         max_sim = 0.0
+        mejor_ref = ""
         for ref in self.textos_referencia:
             sim = self.evaluador.calcular_calidad_sbert(texto_generado, ref)
             if sim > max_sim:
                 max_sim = sim
+                mejor_ref = ref # Guardamos contra qué texto hizo match
+                
+        solucion.score_sbert = max_sim
+        solucion.texto_referencia_match = mejor_ref
+        return solucion
                 
         solucion.score_sbert = max_sim
         return solucion

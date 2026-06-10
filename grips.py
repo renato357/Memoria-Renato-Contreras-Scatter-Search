@@ -97,9 +97,17 @@ class ModuloGrIPS:
         # 1. Calculamos el SBERT base (El rival a vencer)
         if individuo.score_sbert == 0.0:
             texto_base = self.llm.invocar(individuo.prompt_completo)
-            max_sim_base = max([self.evaluador.calcular_calidad_sbert(texto_base, ref) for ref in textos_referencia])
+            max_sim_base = 0.0
+            mejor_ref_base = ""
+            for ref in textos_referencia:
+                sim = self.evaluador.calcular_calidad_sbert(texto_base, ref)
+                if sim > max_sim_base:
+                    max_sim_base = sim
+                    mejor_ref_base = ref
+                    
             individuo.score_sbert = max_sim_base
             individuo.dato_generado = texto_base
+            individuo.texto_referencia_match = mejor_ref_base # <-- El eslabón perdido
 
         print(f"  [GrIPS] SBERT Base a batir: {individuo.score_sbert:.4f}")
 
@@ -112,12 +120,18 @@ class ModuloGrIPS:
         # 3. Probamos una por una hasta que una gane
         for i, (operacion, nueva_tarea, borrado) in enumerate(candidatos_mutados):
             prompt_temp = f"Role: {individuo.rol}. Task: {nueva_tarea}"
-            
-            # Print en la misma línea para que se vea como carga
             print(f"    -> Testeando mutación {i+1}/{len(candidatos_mutados)} ({operacion})... ", end="", flush=True)
             
             dato_prueba = self.llm.invocar(prompt_temp)
-            max_sim_prueba = max([self.evaluador.calcular_calidad_sbert(dato_prueba, ref) for ref in textos_referencia])
+            
+            # Buscar el max_sim y además guardar el texto real que hizo match
+            max_sim_prueba = 0.0
+            mejor_ref_prueba = ""
+            for ref in textos_referencia:
+                sim = self.evaluador.calcular_calidad_sbert(dato_prueba, ref)
+                if sim > max_sim_prueba:
+                    max_sim_prueba = sim
+                    mejor_ref_prueba = ref
             
             if max_sim_prueba > mejor_individuo.score_sbert:
                 print(f"¡ÉXITO! SBERT subió a {max_sim_prueba:.4f}")
@@ -127,6 +141,7 @@ class ModuloGrIPS:
                     tarea=nueva_tarea,
                     prompt_completo=prompt_temp,
                     dato_generado=dato_prueba,
+                    texto_referencia_match=mejor_ref_prueba, # <--- NUEVO
                     score_sbert=max_sim_prueba,
                     origen=operacion
                 )

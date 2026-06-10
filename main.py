@@ -44,17 +44,11 @@ def ejecutar_experimento(
         semilla_global=semilla_global
     )
     
-    # Pasamos los motores ya instanciados a GrIPS para evitar errores
     grips = ModuloGrIPS(ss.llm, ss.evaluador)
 
     # 2. Inicialización
-    # (El run_comparativa.py puede sobreescribir ss.generar_poblacion_inicial)
     poblacion_inicial = ss.generar_poblacion_inicial()
-    
-    # Evaluamos y construimos el RefSet inicial.
     refset = ss.construir_refset(poblacion_inicial)
-    
-    # Guardamos la foto completa de los individuos iniciales evaluados
     poblacion_inicial_foto = copy.deepcopy(poblacion_inicial)
     
     mejor_global = refset[0]
@@ -76,13 +70,11 @@ def ejecutar_experimento(
         for p1, p2 in pares:
             hijos = ss.combinar_soluciones(p1, p2)
             for h in hijos:
-                # Mutación GrIPS real: toma el hijo, evalúa su base y aplica operadores buscando subir el SBERT
                 h_mejorado = grips.ejecutar_greedy(h, ss.textos_referencia)
                 nuevos_hijos.append(h_mejorado)
             
         print(f"  Se generaron y procesaron por GrIPS {len(nuevos_hijos)} hijos nuevos.")
         
-        # Unimos RefSet actual con los nuevos hijos y reconstruimos la élite
         poblacion_combinada = refset + nuevos_hijos
         refset = ss.construir_refset(poblacion_combinada)
         
@@ -98,7 +90,6 @@ def ejecutar_experimento(
         })
         print(f"  [Gen {gen} Fin] Mejor SBERT: {mejor_actual.score_sbert:.4f} | Promedio RefSet: {promedio_gen:.4f}")
 
-    # 4. Fin del Tiempo
     tiempo_fin = time.time()
     tiempo_total_minutos = round((tiempo_fin - tiempo_inicio) / 60.0, 2)
     print(f"\n================ EXPERIMENTO FINALIZADO ================")
@@ -112,8 +103,8 @@ def ejecutar_experimento(
             "tarea": sol.tarea,
             "prompt": sol.prompt_completo,
             "tweet_generado": getattr(sol, 'dato_generado', ''),
+            "tweet_real_match": getattr(sol, 'texto_referencia_match', ''),
             "sbert": getattr(sol, 'score_sbert', 0.0),
-            "bleu": getattr(sol, 'score_bleu', 0.0),
             "origen": sol.origen
         } for sol in poblacion_lista]
 
@@ -136,8 +127,8 @@ def ejecutar_experimento(
             "tarea": mejor_global.tarea,
             "prompt": mejor_global.prompt_completo,
             "tweet_generado": mejor_global.dato_generado,
+            "tweet_real_match": getattr(mejor_global, 'texto_referencia_match', ''),
             "sbert": mejor_global.score_sbert,
-            "bleu": getattr(mejor_global, 'score_bleu', 0.0),
             "origen": mejor_global.origen
         },
         "refset_final": serializar_poblacion(refset)
@@ -149,5 +140,4 @@ def ejecutar_experimento(
     print(f"Resultados guardados en {archivo_salida}")
 
 if __name__ == "__main__":
-    # Corrida de prueba rápida local
     ejecutar_experimento(generaciones=1, tamano_poblacion=4, tamano_refset=2, archivo_salida="test_run.json", semilla_global=42)
