@@ -1,0 +1,69 @@
+[
+    {
+        "archivo": "resultado_eval_estandar.json",
+        "configuracion_original": {
+            "generaciones": 10,
+            "tamano_poblacion": 40,
+            "tamano_refset": 10,
+            "validacion_cruzada": false,
+            "llm_model": "llama3.1:8b",
+            "sbert_model": "all-MiniLM-L6-v2",
+            "semilla_global": 42,
+            "tiempo_ejecucion_minutos": 161.77
+        },
+        "mejor_individuo": {
+            "sbert": 0.7235851287841797,
+            "jaccard": 0.043478260869565216
+        },
+        "poblacion_inicial": {
+            "jaccard_promedio": 0.04304297182363393,
+            "jaccard_max": 0.09836065573770492
+        },
+        "refset_final": {
+            "jaccard_promedio": 0.043478260869565216,
+            "jaccard_max": 0.043478260869565216
+        }
+    },
+    {
+        "archivo": "resultado_eval_cruzada.json",
+        "configuracion_original": {
+            "generaciones": 10,
+            "tamano_poblacion": 40,
+            "tamano_refset": 10,
+            "validacion_cruzada": true,
+            "llm_model": "llama3.1:8b",
+            "sbert_model": "all-MiniLM-L6-v2",
+            "semilla_global": 42,
+            "tiempo_ejecucion_minutos": 232.3
+        },
+        "mejor_individuo": {
+            "sbert": 0.8010255694389343,
+            "jaccard": 0.03389830508474576
+        },
+        "poblacion_inicial": {
+            "jaccard_promedio": 0.035303843800489246,
+            "jaccard_max": 0.0784313725490196
+        },
+        "refset_final": {
+            "jaccard_promedio": 0.04055413046288673,
+            "jaccard_max": 0.0851063829787234
+        }
+    },
+    {
+        "archivo": "test_run.json",
+        "configuracion_original": {
+            "generaciones": 1,
+            "tamano_poblacion": 4,
+            "tamano_refset": 2
+        },
+        "mejor_individuo": {
+            "sbert": 0.751072883605957,
+            "jaccard": 0.0
+        },
+        "poblacion_inicial": {},
+        "refset_final": {
+            "jaccard_promedio": 0.0,
+            "jaccard_max": 0.0
+        }
+    }
+]

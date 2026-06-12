@@ -49,10 +49,8 @@ class ScatterSearch:
                 excluir_textos=self.textos_contexto_llm
             )
         else:
-            print("[Estrategia] Validación Estándar: El Gold Standard permite solapamiento.")
-            self.textos_referencia = self.dataset.obtener_muestra_referencia(
-                n=50
-            )
+            print("[Estrategia] Validación Estándar (Data Leakage Total): El Gold Standard será EXACTAMENTE los textos usados para inspirar.")
+            self.textos_referencia = self.textos_contexto_llm.copy()
 
     def generar_poblacion_inicial(self) -> list:
         """

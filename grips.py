@@ -14,6 +14,14 @@ class ModuloGrIPS:
         
         # Stop words básicas para evitar borrar palabras clave
         self.stop_words = {"a", "an", "the", "in", "on", "at", "to", "for", "of", "and", "is", "with", "that"}
+        
+        # Estadísticas permanentes de GrIPS
+        self.stats_operadores = {
+            "grips_delete": {"intentos": 0, "exitos": 0, "mejora_acumulada": 0.0},
+            "grips_swap": {"intentos": 0, "exitos": 0, "mejora_acumulada": 0.0},
+            "grips_paraphrase": {"intentos": 0, "exitos": 0, "mejora_acumulada": 0.0},
+            "grips_add": {"intentos": 0, "exitos": 0, "mejora_acumulada": 0.0}
+        }
 
     def _dividir_en_frases(self, texto: str) -> list:
         """Divide el texto en partes usando signos de puntuación o conectores."""
@@ -133,9 +141,19 @@ class ModuloGrIPS:
                     max_sim_prueba = sim
                     mejor_ref_prueba = ref
             
+            # Registrar el intento
+            if operacion in self.stats_operadores:
+                self.stats_operadores[operacion]["intentos"] += 1
+                
             if max_sim_prueba > mejor_individuo.score_sbert:
                 print(f"¡ÉXITO! SBERT subió a {max_sim_prueba:.4f}")
                 
+                # Registrar el éxito y la mejora
+                if operacion in self.stats_operadores:
+                    mejora = max_sim_prueba - mejor_individuo.score_sbert
+                    self.stats_operadores[operacion]["exitos"] += 1
+                    self.stats_operadores[operacion]["mejora_acumulada"] += mejora
+                    
                 mejor_individuo = PromptSolution(
                     rol=individuo.rol,
                     tarea=nueva_tarea,

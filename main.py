@@ -131,13 +131,15 @@ def ejecutar_experimento(
             "sbert": mejor_global.score_sbert,
             "origen": mejor_global.origen
         },
-        "refset_final": serializar_poblacion(refset)
+        "refset_final": serializar_poblacion(refset),
+        "stats_grips": grips.stats_operadores
     }
     
     with open(archivo_salida, 'w', encoding='utf-8') as f:
         json.dump(salida, f, indent=4, ensure_ascii=False)
         
     print(f"Resultados guardados en {archivo_salida}")
+    return salida
 
 if __name__ == "__main__":
     ejecutar_experimento(generaciones=1, tamano_poblacion=4, tamano_refset=2, archivo_salida="test_run.json", semilla_global=42)
