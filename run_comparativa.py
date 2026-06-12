@@ -25,7 +25,7 @@ def experimento_1_base():
             tamano_poblacion=40,
             tamano_refset=10,
             archivo_salida=f"temp_run_exp1.json", 
-            validacion_cruzada=False,
+            validacion_cruzada=True,
             llm_model_name=MODELO_LLM,
             sbert_model_name=MODELO_SBERT,
             max_tokens_salida=MAX_TOKENS,
@@ -40,28 +40,29 @@ def experimento_1_base():
 
 def experimento_2_sensibilidad():
     print("\n" + "="*50)
-    print(" INICIANDO EXPERIMENTO 2: SENSIBILIDAD DE HIPERPARÁMETROS")
+    print(" INICIANDO EXPERIMENTO 2: SENSIBILIDAD (REFSET Y GENERACIONES)")
     print("="*50)
     
     resultados_totales = {}
     
-    # FASE A: Fijar Población=40, Variar RefSet
+    # FASE A: Fijar Generaciones=10, Población=40, Variar RefSet
+    generacion_fija = 10
     poblacion_fija = 40
     refsets_a_probar = [5, 10, 15]
     
     for r in refsets_a_probar:
-        config_name = f"conf_P{poblacion_fija}_R{r}"
+        config_name = f"conf_G{generacion_fija}_R{r}"
         if config_name not in resultados_totales:
             resultados_totales[config_name] = []
             
         for i in range(1, 4):
             print(f"\n>> Exp 2 (Fase A) - {config_name} - Ejecución {i}/3")
             salida = ejecutar_experimento(
-                generaciones=10,
+                generaciones=generacion_fija,
                 tamano_poblacion=poblacion_fija,
                 tamano_refset=r,
                 archivo_salida="temp_run_exp2.json",
-                validacion_cruzada=False,
+                validacion_cruzada=True,
                 llm_model_name=MODELO_LLM,
                 sbert_model_name=MODELO_SBERT,
                 max_tokens_salida=MAX_TOKENS,
@@ -69,23 +70,23 @@ def experimento_2_sensibilidad():
             )
             resultados_totales[config_name].append(salida)
             
-    # FASE B: Fijar RefSet=10, Variar Población
+    # FASE B: Fijar Población=40, RefSet=10, Variar Generaciones
     refset_fijo = 10
-    poblaciones_a_probar = [20, 40, 60]
+    generaciones_a_probar = [5, 10, 15]
     
-    for p in poblaciones_a_probar:
-        config_name = f"conf_P{p}_R{refset_fijo}"
+    for g in generaciones_a_probar:
+        config_name = f"conf_G{g}_R{refset_fijo}"
         if config_name not in resultados_totales:
             resultados_totales[config_name] = []
             
         for i in range(1, 4):
             print(f"\n>> Exp 2 (Fase B) - {config_name} - Ejecución {i}/3")
             salida = ejecutar_experimento(
-                generaciones=10,
-                tamano_poblacion=p,
+                generaciones=g,
+                tamano_poblacion=poblacion_fija,
                 tamano_refset=refset_fijo,
                 archivo_salida="temp_run_exp2.json",
-                validacion_cruzada=False,
+                validacion_cruzada=True,
                 llm_model_name=MODELO_LLM,
                 sbert_model_name=MODELO_SBERT,
                 max_tokens_salida=MAX_TOKENS,
@@ -113,7 +114,7 @@ def experimento_3_radiografia():
             tamano_poblacion=40,
             tamano_refset=10,
             archivo_salida="temp_run_exp3.json",
-            validacion_cruzada=False,
+            validacion_cruzada=True,
             llm_model_name=MODELO_LLM,
             sbert_model_name=MODELO_SBERT,
             max_tokens_salida=MAX_TOKENS,
