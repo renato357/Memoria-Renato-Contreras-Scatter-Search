@@ -72,7 +72,7 @@ def experimento_2_sensibilidad():
             
     # FASE B: Fijar Población=40, RefSet=10, Variar Generaciones
     refset_fijo = 10
-    generaciones_a_probar = [5, 10, 15]
+    generaciones_a_probar = [5, 15] # G10 ya se hizo en Fase A
     
     for g in generaciones_a_probar:
         config_name = f"conf_G{g}_R{refset_fijo}"
@@ -99,22 +99,22 @@ def experimento_2_sensibilidad():
     print("\n✅ Experimento 2 Finalizado. Resultados guardados en exp2_sensibilidad.json")
 
 
-def experimento_3_radiografia():
+def experimento_3_data_leakage():
     print("\n" + "="*50)
-    print(" INICIANDO EXPERIMENTO 3: RADIOGRAFÍA GrIPS")
+    print(" INICIANDO EXPERIMENTO 3: DATA LEAKAGE (CRUZADA OFF)")
     print("="*50)
     
     # G=10, P=40, R=10, 3 corridas
     resultados = []
     
     for i in range(1, 4):
-        print(f"\n>> Corriendo Exp 3 - Ejecución {i}/3")
+        print(f"\n>> Corriendo Exp 3 (Cruzada OFF) - Ejecución {i}/3")
         salida = ejecutar_experimento(
             generaciones=10,
             tamano_poblacion=40,
             tamano_refset=10,
             archivo_salida="temp_run_exp3.json",
-            validacion_cruzada=True,
+            validacion_cruzada=False,  # ESTO ESTÁ APAGADO PARA PROBAR DATA LEAKAGE
             llm_model_name=MODELO_LLM,
             sbert_model_name=MODELO_SBERT,
             max_tokens_salida=MAX_TOKENS,
@@ -122,9 +122,9 @@ def experimento_3_radiografia():
         )
         resultados.append(salida)
         
-    with open("exp3_radiografia.json", "w", encoding="utf-8") as f:
+    with open("exp3_cruzada_off.json", "w", encoding="utf-8") as f:
         json.dump(resultados, f, indent=4, ensure_ascii=False)
-    print("\n✅ Experimento 3 Finalizado. Resultados guardados en exp3_radiografia.json")
+    print("\n✅ Experimento 3 Finalizado. Resultados guardados en exp3_cruzada_off.json")
 
 
 if __name__ == "__main__":
@@ -143,8 +143,8 @@ if __name__ == "__main__":
     print("\n[PAUSA TÉCNICA] Enfriando sistema por 10 segundos...")
     time.sleep(10)
     
-    experimento_3_radiografia()
+    experimento_3_data_leakage()
     
     tiempo_total = time.time() - tiempo_inicio
     print(f"\n🎉 TODA LA BATERÍA DE EXPERIMENTOS COMPLETADA EN {tiempo_total/60:.2f} MINUTOS.")
-    print("Ya puedes revisar exp1_base.json, exp2_sensibilidad.json y exp3_radiografia.json.")
+    print("Ya puedes revisar exp1_base.json, exp2_sensibilidad.json y exp3_cruzada_off.json.")

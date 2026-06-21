@@ -157,10 +157,20 @@ class ScatterSearch:
         # Ordenamos la población entera de mayor a menor calidad (SBERT)
         poblacion.sort(key=lambda x: x.score_sbert, reverse=True)
         
-        # Selección puramente elitista: tomamos los 'b' mejores absolutos
-        refset_final = poblacion[:self.b]
+        # Selección Elitista con Niching (Bloqueo de Convergencia a 1 Tweet)
+        refset_final = []
+        conteo_objetivos = {}
+        max_por_objetivo = 2
         
-        print("\n--- CONSTRUCCIÓN DEL REFSET (ELITISTA) COMPLETADA ---")
+        for sol in poblacion:
+            objetivo = sol.texto_referencia_match
+            if conteo_objetivos.get(objetivo, 0) < max_por_objetivo:
+                refset_final.append(sol)
+                conteo_objetivos[objetivo] = conteo_objetivos.get(objetivo, 0) + 1
+            if len(refset_final) >= self.b:
+                break
+        
+        print("\n--- CONSTRUCCIÓN DEL REFSET (NICHING) COMPLETADA ---")
         return refset_final
 
     def generar_pares(self, refset: list) -> list:

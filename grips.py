@@ -121,7 +121,9 @@ class ModuloGrIPS:
 
         # 2. Generamos todas las posibles mutaciones
         candidatos_mutados = self.aplicar_operadores(individuo)
-        print(f"  [GrIPS] Se generaron {len(candidatos_mutados)} mutaciones posibles. Probando en modo Greedy...")
+        # Barajamos los candidatos para que el orden de prueba no esté sesgado a un operador específico
+        random.shuffle(candidatos_mutados)
+        print(f"  [GrIPS] Se generaron {len(candidatos_mutados)} mutaciones posibles. Probando en modo Greedy (Orden Aleatorio)...")
         
         mejor_individuo = individuo 
 
