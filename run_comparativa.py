@@ -127,24 +127,58 @@ def experimento_3_data_leakage():
     print("\n✅ Experimento 3 Finalizado. Resultados guardados en exp3_cruzada_off.json")
 
 
+def experimento_4_temperaturas():
+    print("\n" + "="*50)
+    print(" INICIANDO EXPERIMENTO 4: IMPACTO DE LA TEMPERATURA EN GrIPS")
+    print("="*50)
+    
+    resultados_totales = {}
+    temperaturas = [0.0, 0.4, 0.6]
+    
+    for temp in temperaturas:
+        config_name = f"conf_T{temp}"
+        resultados_totales[config_name] = []
+        
+        for i in range(1, 4):
+            print(f"\n>> Corriendo Exp 4 (Temp={temp}) - Ejecución {i}/3")
+            salida = ejecutar_experimento(
+                generaciones=10,
+                tamano_poblacion=40,
+                tamano_refset=10,
+                archivo_salida=f"temp_run_exp4.json",
+                validacion_cruzada=True,
+                llm_model_name=MODELO_LLM,
+                sbert_model_name=MODELO_SBERT,
+                max_tokens_salida=MAX_TOKENS,
+                semilla_global=None,
+                temp_paraphrase=temp
+            )
+            resultados_totales[config_name].append(salida)
+            
+    with open("exp4_temperaturas.json", "w", encoding="utf-8") as f:
+        json.dump(resultados_totales, f, indent=4, ensure_ascii=False)
+    print("\n✅ Experimento 4 Finalizado. Resultados guardados en exp4_temperaturas.json")
+
 if __name__ == "__main__":
     # Forzamos la inicialización LLM para todas las pruebas
     ScatterSearch.generar_poblacion_inicial = ScatterSearch.generar_poblacion_inicial_llm
     
     tiempo_inicio = time.time()
     
-    experimento_1_base()
+    # experimento_1_base()
     
-    print("\n[PAUSA TÉCNICA] Enfriando sistema por 10 segundos...")
-    time.sleep(10)
+    # print("\n[PAUSA TÉCNICA] Enfriando sistema por 10 segundos...")
+    # time.sleep(10)
     
-    experimento_2_sensibilidad()
+    # experimento_2_sensibilidad()
     
-    print("\n[PAUSA TÉCNICA] Enfriando sistema por 10 segundos...")
-    time.sleep(10)
+    # print("\n[PAUSA TÉCNICA] Enfriando sistema por 10 segundos...")
+    # time.sleep(10)
     
-    experimento_3_data_leakage()
+    # experimento_3_data_leakage()
+    
+    experimento_4_temperaturas()
     
     tiempo_total = time.time() - tiempo_inicio
     print(f"\n🎉 TODA LA BATERÍA DE EXPERIMENTOS COMPLETADA EN {tiempo_total/60:.2f} MINUTOS.")
-    print("Ya puedes revisar exp1_base.json, exp2_sensibilidad.json y exp3_cruzada_off.json.")
+    print("Revisar resultados en exp4_temperaturas.json.")

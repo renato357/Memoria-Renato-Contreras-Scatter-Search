@@ -5,12 +5,13 @@ from llm import MotorLLM
 from evaluator import EvaluadorMetricas
 
 class ModuloGrIPS:
-    def __init__(self, motor_llm: MotorLLM, evaluador: EvaluadorMetricas):
+    def __init__(self, motor_llm: MotorLLM, evaluador: EvaluadorMetricas, temp_paraphrase: float = 0.2):
         """
         Inicializa el módulo de mejora local (Intensificación).
         """
         self.llm = motor_llm
         self.evaluador = evaluador
+        self.temp_paraphrase = temp_paraphrase
         
         # Stop words básicas para evitar borrar palabras clave
         self.stop_words = {"a", "an", "the", "in", "on", "at", "to", "for", "of", "and", "is", "with", "that"}
@@ -78,8 +79,8 @@ class ModuloGrIPS:
             prompt_paraf = f"Rewrite this phrase briefly: '{objetivo}'. Reply ONLY with the rewritten phrase, no quotes."
             
             try:
-                # Usamos una temperatura baja (0.2) para que el parafraseo sea directo y no alucine
-                nueva_frase = self.llm.invocar(prompt_paraf, system_prompt="You are a strict text editor.", temp=0.2)
+                # Usamos la temperatura configurada para ver su impacto (Base es 0.2)
+                nueva_frase = self.llm.invocar(prompt_paraf, system_prompt="You are a strict text editor.", temp=self.temp_paraphrase)
                 nueva_frase = nueva_frase.replace('"', '').replace("'", "").strip()
                 
                 if nueva_frase and nueva_frase.lower() != objetivo.lower():
@@ -89,12 +90,14 @@ class ModuloGrIPS:
             except Exception:
                 pass # Si falla el LLM, ignoramos el parafraseo y seguimos
 
-        # 4. ADD (Añadir)
-        if individuo.frases_borradas and frases:
-            frase_a_anadir = random.choice(individuo.frases_borradas)
-            insert_idx = random.randint(0, len(frases))
-            nuevas_frases = frases[:insert_idx] + [frase_a_anadir] + frases[insert_idx:]
-            candidatos.append(("grips_add", " ".join(nuevas_frases), None))
+        # 4. ADD (Añadir) - DESHABILITADO
+        # Se comprobó empíricamente que reinsertar frases truncadas rompe la coherencia
+        # sintáctica del lenguaje natural y disminuye el SBERT, por lo que se retira del algoritmo.
+        # if individuo.frases_borradas and frases:
+        #     frase_a_anadir = random.choice(individuo.frases_borradas)
+        #     insert_idx = random.randint(0, len(frases))
+        #     nuevas_frases = frases[:insert_idx] + [frase_a_anadir] + frases[insert_idx:]
+        #     candidatos.append(("grips_add", " ".join(nuevas_frases), None))
 
         return candidatos
 

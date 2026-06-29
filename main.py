@@ -14,7 +14,8 @@ def ejecutar_experimento(
     llm_model_name="llama3.1:8b",
     sbert_model_name="all-MiniLM-L6-v2",
     max_tokens_salida=150,
-    semilla_global=None
+    semilla_global=None,
+    temp_paraphrase=0.2
 ):
     # ==========================================
     # ANCLAJE DE ALEATORIEDAD MAESTRA
@@ -44,7 +45,7 @@ def ejecutar_experimento(
         semilla_global=semilla_global
     )
     
-    grips = ModuloGrIPS(ss.llm, ss.evaluador)
+    grips = ModuloGrIPS(ss.llm, ss.evaluador, temp_paraphrase)
 
     # 2. Inicialización
     poblacion_inicial = ss.generar_poblacion_inicial()
