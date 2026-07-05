@@ -13,11 +13,13 @@ class ScatterSearch:
                  llm_model_name="llama3.1:8b",
                  sbert_model_name="all-MiniLM-L6-v2",
                  max_tokens_salida=150,
-                 semilla_global=None):
+                 semilla_global=None,
+                 temp_inicial=0.9):
         """
         Inicializa el algoritmo recibiendo todos los hiperparámetros desde la función principal.
         """
         self.P_size = tamano_poblacion
+        self.temp_inicial = temp_inicial
         self.b = tamano_refset
         self.b_elite = self.b // 2
         self.b_div = self.b - self.b_elite
@@ -106,8 +108,8 @@ class ScatterSearch:
             )
             
             try:
-                # Temperatura de 0.9 para fomentar la creatividad inicial
-                respuesta = self.llm.invocar(prompt_meta, system_prompt="You are an expert prompt engineer.", temp=0.9)
+                # Usamos la temperatura de inicialización configurada
+                respuesta = self.llm.invocar(prompt_meta, system_prompt="You are an expert prompt engineer.", temp=self.temp_inicial)
                 if "Role:" in respuesta and "Task:" in respuesta:
                     partes = respuesta.split("Task:")
                     rol = partes[0].replace("Role:", "").strip()

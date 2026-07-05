@@ -159,6 +159,78 @@ def experimento_4_temperaturas():
         json.dump(resultados_totales, f, indent=4, ensure_ascii=False)
     print("\n✅ Experimento 4 Finalizado. Resultados guardados en exp4_temperaturas.json")
 
+def experimento_5_inicializacion():
+    print("\n" + "="*50)
+    print(" INICIANDO EXPERIMENTO 5: TEMPERATURA EN INICIALIZACIÓN")
+    print("="*50)
+    
+    resultados_totales = {}
+    temperaturas = [0.1, 0.3, 0.5, 0.7, 0.9]
+    
+    for temp in temperaturas:
+        config_name = f"conf_T{temp}"
+        resultados_totales[config_name] = []
+        
+        for i in range(1, 4):
+            print(f"\n>> Corriendo Exp 5 (Temp={temp}) - Ejecución {i}/3")
+            tiempo_inicio = time.time()
+            
+            ss = ScatterSearch(
+                tamano_poblacion=40,
+                tamano_refset=10,
+                validacion_cruzada=True,
+                llm_model_name=MODELO_LLM,
+                sbert_model_name=MODELO_SBERT,
+                max_tokens_salida=MAX_TOKENS,
+                semilla_global=None,
+                temp_inicial=temp
+            )
+            
+            poblacion = ss.generar_poblacion_inicial_llm()
+            
+            sberts = []
+            fallbacks = 0
+            palabras_totales = set()
+            
+            print(f"  Evaluando {len(poblacion)} prompts iniciales...")
+            for sol in poblacion:
+                if sol.origen == "init_llm_fallback":
+                    fallbacks += 1
+                
+                # Evaluar prompt
+                texto_gen = ss.llm.invocar(sol.prompt_completo)
+                sol.dato_generado = texto_gen
+                
+                max_sbert = 0.0
+                for ref in ss.textos_referencia:
+                    sim = ss.evaluador.calcular_calidad_sbert(texto_gen, ref)
+                    if sim > max_sbert:
+                        max_sbert = sim
+                sberts.append(max_sbert)
+                
+                # Diversidad léxica basada en el PROMPT generado (Role/Task)
+                palabras_prompt = sol.prompt_completo.lower().split()
+                palabras_totales.update(palabras_prompt)
+                
+            tiempo_fin = time.time()
+            
+            salida = {
+                "temperatura": temp,
+                "corrida": i,
+                "sbert_maximo": float(max(sberts)) if sberts else 0.0,
+                "sbert_promedio": float(sum(sberts)/len(sberts)) if sberts else 0.0,
+                "fallbacks": fallbacks,
+                "diversidad_lexica": len(palabras_totales),
+                "tiempo_minutos": (tiempo_fin - tiempo_inicio) / 60.0,
+                "prompts_generados": [{"rol": s.rol, "tarea": s.tarea, "origen": s.origen, "sbert": float(sberts[idx])} for idx, s in enumerate(poblacion)]
+            }
+            
+            resultados_totales[config_name].append(salida)
+            
+    with open("exp5_inicializacion.json", "w", encoding="utf-8") as f:
+        json.dump(resultados_totales, f, indent=4, ensure_ascii=False)
+    print("\n✅ Experimento 5 Finalizado. Resultados guardados en exp5_inicializacion.json")
+
 if __name__ == "__main__":
     # Forzamos la inicialización LLM para todas las pruebas
     ScatterSearch.generar_poblacion_inicial = ScatterSearch.generar_poblacion_inicial_llm
@@ -166,19 +238,12 @@ if __name__ == "__main__":
     tiempo_inicio = time.time()
     
     # experimento_1_base()
-    
-    # print("\n[PAUSA TÉCNICA] Enfriando sistema por 10 segundos...")
-    # time.sleep(10)
-    
     # experimento_2_sensibilidad()
-    
-    # print("\n[PAUSA TÉCNICA] Enfriando sistema por 10 segundos...")
-    # time.sleep(10)
-    
     # experimento_3_data_leakage()
+    # experimento_4_temperaturas()
     
-    experimento_4_temperaturas()
+    experimento_5_inicializacion()
     
     tiempo_total = time.time() - tiempo_inicio
     print(f"\n🎉 TODA LA BATERÍA DE EXPERIMENTOS COMPLETADA EN {tiempo_total/60:.2f} MINUTOS.")
-    print("Revisar resultados en exp4_temperaturas.json.")
+    print("Revisar resultados en exp5_inicializacion.json.")

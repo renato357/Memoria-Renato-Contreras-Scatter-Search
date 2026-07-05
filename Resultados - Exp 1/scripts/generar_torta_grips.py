@@ -18,7 +18,8 @@ def generar_torta_grips():
                 if op in total_stats:
                     total_stats[op] += stats.get("exitos", 0)
                 
-    labels = list(total_stats.keys())
+    # Cambiamos los nombres a español para el gráfico
+    labels = ["Borrar", "Intercambiar", "Parafrasear"]
     sizes = list(total_stats.values())
     
     if sum(sizes) == 0:
