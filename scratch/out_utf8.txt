@@ -1,0 +1,60 @@
+--- File: Resultados - Exp 1\exp1_base.json ---
+SBERT: 0.6758648753166199
+Gen: "Are u aware Corona-virus is just an A-ha moment? Amidst All this Anarchy, Authorities Announce Another Auspicious Announcement. As Always, Avoid Anywhere Around Affected Areas #CovidAid"
+Real: corona virus  exists  south africansits all the way in china its to far to get to me coronavirus a month later
+--------------------
+SBERT: 0.667422354221344
+Gen: "Corona can't contain me... said no one ever. I'm stuck inside, but my memes are free to roam #CoronaCan'tCatchMe #IsolationSquad"
+Real: this is my fav corona meme
+--------------------
+SBERT: 0.6643866896629333
+Gen: "Corona's got me feeling 'drained to the last drop'... of my sanity, that is! Who knew this virus would suck all the social life outta me? #QuarantineLife #CovidCraziness"
+Real: day 4 of quarantine i be feeling like the corona virus cuss nobody want me
+--------------------
+SBERT: 0.6639182567596436
+Gen: "COVID-19 got me feeling like I'm stuck in a 'Corona' virus nightmare... literally! My social life is 'INFECTED', my productivity is 'VIRAL' and don't even get me started on the 'SYMPTOMS' of boredom. Time to #QuarantineLife"
+Real: day 4 of quarantine i be feeling like the corona virus cuss nobody want me
+--------------------
+--- File: Resultados - Exp 2\exp2_sensibilidad.json ---
+SBERT: 0.8302358388900757
+Gen: "Be cautious & take preventive measures while dealing with Corona: Avoid Close Contact, Maintain Hygiene, Don't Ignore Symptoms, Stay Informed. Remember, safety is everyone's responsibility! #CoronaPrevention #StaySafe"
+Real: corona precautions
+--------------------
+SBERT: 0.8128536343574524
+Gen: "Alert! Amidst the Corona chaos, adhere to simple precautions. Avoid touching your face, especially mouth & eyes. Always wash hands frequently, at least 20 seconds. Act responsibly & stay informed! #StaySafe #CoronaPrecautions"
+Real: corona precautions
+--------------------
+SBERT: 0.7971678972244263
+Gen: "Wash those hands like you mean it! Remember, soap and water are your BFFs when it comes to keeping COVID at bay. Stay safe, stay healthy, and send love to all those fighting on the frontlines #CoronavirusAwareness #GratitudeForHealthcareHeroes"
+Real: lets keep washing hands frequently to avoid getting the corona virus  your health and life is very important at this time of crisis
+--------------------
+SBERT: 0.7758483290672302
+Gen: "And in the wake of unforeseen travel restrictions caused by the #COVID19 pandemic, airlines are now offering refunds for cancelled flights. Travelers who booked tickets before March 2020 can expect a full refund, according to new guidelines from @IATA #CoronavirusUpdate"
+Real: i booked flights for april 2020 for an eventwith the covid19 outbreak and travel restrictions event was cancelleddue to travel restrictions and uncertainty i contacted mango for a refund of the ticketstheir response is no refunds for corona related cancellations
+--------------------
+--- File: Resultados - Exp 3\exp3_cruzada_off.json ---
+SBERT: 0.8819642663002014
+Gen: "FINAL CHECK FROM PODGORICA, MONTENEGRO: As we prepare for a nationwide lockdown in SLOVENIA tonight at MIDNIGHT, our teams are conducting final checks to ensure readiness. From the Reaktorski Center, our operations are on high alert. Stay safe, Slovenia! #SloveniaLockdown"
+Real: final check before the full lockdown in slovenia starting at midnight reaktorski center podgorica
+--------------------
+--- File: exp4_temperaturas.json ---
+SBERT: 0.7325411438941956
+Gen: "Corona-virus of misinformation spreading faster than the virus itself! Fearing #COVID19 will be the 'influenza' for common sense in public health discussions #MisinformationMasksTheTruth"
+Real: covid19 the corona virus or sarscov2 is still extremely new and scientists so theres not much for me to say here that isnt already public information
+--------------------
+SBERT: 0.7325285077095032
+Gen: "Breaking News: COVID-19 is spreading fast, but so are our DIY remedies! Who needs science when you have 'Corona-B-Gone' and 'Virus-Away'? Asking for a friend #COVID19Solutions #HomeMadeRemedies #PandemicProblems"
+Real: covid19 the corona virus or sarscov2 is still extremely new and scientists so theres not much for me to say here that isnt already public information
+--------------------
+SBERT: 0.7267624139785767
+Gen: "BREAKING: Local Corona virus donates FREE cloth face masks, because priorities! Please report any misinformation attempts by rival viruses #CoronaCares #MaskUp"
+Real: coronavirus akothee offers to provide the needy with sanitizers masks
+--------------------
+SBERT: 0.7213461399078369
+Gen: "I'm getting increasingly worried as I see more & more cases of Corona in our community, including some who've unfortunately passed away. When will this pandemic end? Can we take more precautions to stay safe? #COVID19 #StaySafe"
+Real: corona died but new covid or new deadly virus will be on que
+--------------------
+SBERT: 0.7204766273498535
+Gen: "Corona conundrum: will we be 'vaccinated' with bad ideas instead of immunity? Sharing homemade remedies might just 'infect' us with misinformation #COVID19 #StayInformed"
+Real: we humans are virus corona is just a vaccine
+--------------------
